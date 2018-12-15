@@ -10,3 +10,4 @@ Implementing the follow libraries from the Android Architecture Component:
 
 And some other libraries as:
 * Retrofit
+* Glide

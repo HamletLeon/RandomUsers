@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">RandomUsers</string>
+    <string name="favorites">Favorites</string>
+    <string name="others">Others</string>
 </resources>
