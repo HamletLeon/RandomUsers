@@ -6,8 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hamletleon.randomusers.R
 import com.hamletleon.randomusers.databinding.MainFragmentBinding
+import com.hamletleon.randomusers.dtos.UserDto
+import com.hamletleon.randomusers.ui.main.adapters.UsersAdapter
+import com.hamletleon.randomusers.utils.calculateScreenSizeAndItemsOnIt
 
 class MainFragment : androidx.fragment.app.Fragment() {
     private lateinit var viewModel: MainViewModel
@@ -28,7 +33,27 @@ class MainFragment : androidx.fragment.app.Fragment() {
         setListeners()
     }
 
-    private fun setListeners() {
+    private fun setListeners() { }
 
+    private fun setAdapter(mainAdapter: Boolean = true) {
+        if (mainAdapter)
+        {
+            initManager(binding.allList)
+            val adapter = UsersAdapter(this, viewModel.users)
+            viewModel.usersAdapter = adapter
+            binding.allList?.adapter = adapter
+        }
+        else {
+            initManager(binding.favoritesList)
+            val adapter = UsersAdapter(this, viewModel.favorites)
+            viewModel.favoritesAdapter = adapter
+            binding.favoritesList?.adapter = adapter
+            binding.favoritesLayout?.visibility = View.VISIBLE
+        }
+    }
+    private fun initManager(recyclerView: RecyclerView?, itemSizeDpHeight: Int = 80, itemSizeDpWidth: Int = 80){
+        val (_, itemsOnScreen) = activity.calculateScreenSizeAndItemsOnIt(itemSizeDpHeight, itemSizeDpWidth)
+        val manager = recyclerView?.layoutManager as? GridLayoutManager
+        manager?.spanCount = if (viewModel.twoPane.value == true) (itemsOnScreen.itemsOnWidth / 2) else itemsOnScreen.itemsOnWidth
     }
 }
