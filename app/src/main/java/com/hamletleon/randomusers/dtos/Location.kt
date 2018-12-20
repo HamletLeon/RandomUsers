@@ -9,7 +9,7 @@ class Location{
     var state: String = ""
     var postcode: String = ""
     var coordinates : Coordinate? = null
-    var timeZone: TimeZone? = null
+    var timezone: TimeZone? = null
 
     fun getAddress() = "${street.capitalize()}, ${city.capitalize()}, ${state.capitalize()}."
 }

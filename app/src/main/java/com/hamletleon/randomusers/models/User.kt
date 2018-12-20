@@ -1,13 +1,16 @@
 package com.hamletleon.randomusers.models
 
+import android.os.Build
+import android.telephony.PhoneNumberUtils
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.hamletleon.randomusers.dtos.UserDto
+import java.util.*
 
 @Entity(tableName = "Users")
 class User {
-    @PrimaryKey var id: Int = 0
+    @PrimaryKey(autoGenerate = true) var id: Int = 0
     var gender: String? = ""
     var title: String = ""
     var firstName: String = ""
@@ -22,8 +25,14 @@ class User {
     var largePicture: String = ""
     var registeredAt: String = ""
 
+    @Embedded var timeZone: TimeZone? = null
+
+    fun getName() = firstName.capitalize()
     fun getTitledName() = "${title.capitalize()} ${firstName.capitalize()}"
     fun getFullTitledName() = "${title.capitalize()} ${fullName.capitalize()}"
+    fun getPhoneNumber(): String =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) PhoneNumberUtils.formatNumber(phone, Locale.getDefault().country)
+        else PhoneNumberUtils.formatNumber(phone)
 
     constructor()
     constructor(userDto: UserDto) {
@@ -40,5 +49,6 @@ class User {
         tinyPicture = userDto.getTinyPicture()
         largePicture = userDto.getLargePicture()
         registeredAt = userDto.getRegisteredAt()
+        timeZone = userDto.location?.timezone
     }
 }

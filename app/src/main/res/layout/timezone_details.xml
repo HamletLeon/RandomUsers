@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable name="model" type="com.hamletleon.randomusers.models.TimeZone"/>
+    </data>
+
+    <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="4dp"
+            android:layout_margin="4dp">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_margin="7dp">
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="7dp"
+                    android:layout_weight="1">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:autoSizeTextType="uniform"
+                        android:text="@string/time_zone_title"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/fullName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="14sp"
+                        app:autoSizeTextType="uniform"
+                        android:text="@{ model.getFullTimeZone(), default = @string/not_specified }"/>
+
+            </LinearLayout>
+
+            <TextClock
+                    android:id="@+id/textClock"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.6"
+                    android:layout_margin="7dp"
+                    android:format12Hour="hh:mm a"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:timeZone='@{ model.getFormattedOffset(), default = "GMT+00:00" }'
+                    android:textColor="#d41709"
+                    android:textSize="22sp"
+                    android:textStyle="bold"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+</layout>

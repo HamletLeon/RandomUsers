@@ -2,4 +2,9 @@
     <string name="app_name">RandomUsers</string>
     <string name="favorites">Favorites</string>
     <string name="others">Others</string>
+    <string name="full_name_title">Full Name:</string>
+    <string name="not_specified">Not specified</string>
+    <string name="email_title">Email:</string>
+    <string name="phone_number_title">Phone Number:</string>
+    <string name="time_zone_title">Time Zone:</string>
 </resources>

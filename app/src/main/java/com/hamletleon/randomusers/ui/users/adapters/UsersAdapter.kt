@@ -1,9 +1,11 @@
-package com.hamletleon.randomusers.ui.main.adapters
+package com.hamletleon.randomusers.ui.users.adapters
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.hamletleon.randomusers.R
 import com.hamletleon.randomusers.databinding.UserListItemBinding
@@ -25,6 +27,16 @@ class UsersAdapter<T>(private val owner: T, initialUsers: List<User>? = null) : 
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = users[position]
-        holder.bind(user)
+        holder.bind(user).setOnClickListener {
+            val navController = Navigation.findNavController(it)
+            val args = Bundle()
+            args.putInt("userId", user.id)
+            navController.navigate(R.id.userDetailsFragment, args)
+        }
+    }
+
+    fun addUsers(moreUsers: List<User>) {
+        users.addAll(moreUsers)
+        notifyDataSetChanged()
     }
 }

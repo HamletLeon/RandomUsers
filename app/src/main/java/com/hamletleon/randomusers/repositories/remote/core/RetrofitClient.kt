@@ -1,7 +1,10 @@
 package com.hamletleon.randomusers.repositories.remote.core
 
+import com.hamletleon.randomusers.BuildConfig
 import com.hamletleon.randomusers.dtos.UserDto
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
@@ -30,7 +33,7 @@ object RetrofitClient {
             val original = it.request()
             val originalUrl = original.url()
             val url = originalUrl.newBuilder()
-                .addQueryParameter("inc", UserDto::class.java.declaredFields.filter { !it.isSynthetic && it.name != "serialVersionUID" }.map { it.name }.toString())
+                .addQueryParameter("inc", UserDto::class.java.declaredFields.filter { !it.isSynthetic && it.name != "serialVersionUID" }.map { it.name }.joinToString { it })
                 .build()
             val request = original.newBuilder()
                 .url(url).build()
@@ -38,11 +41,11 @@ object RetrofitClient {
         }
 
         // Debug Interceptor
-//        if (BuildConfig.DEBUG) {
-//            val interceptor = HttpLoggingInterceptor()
-//            interceptor.level = HttpLoggingInterceptor.Level.BODY
-//            httpClient.addInterceptor(interceptor)
-//        }
+        if (BuildConfig.DEBUG) {
+            val interceptor = HttpLoggingInterceptor()
+            interceptor.level = HttpLoggingInterceptor.Level.BODY
+            httpClient.addInterceptor(interceptor)
+        }
 
         return httpClient.build()
     }
@@ -50,6 +53,7 @@ object RetrofitClient {
     private fun getRetrofit(baseUrl: String): Retrofit{
         return Retrofit.Builder()
             .baseUrl(baseUrl)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .addConverterFactory(GsonConverterFactory.create())
             .client(mHttpClient)
             .build()
