@@ -5,8 +5,8 @@ This project is based in Kotlin and MVVM Design.
 Implementing the follow libraries from the Android Architecture Component:
 * Navigation
 * Room
-* Pagination
 * LiveData
 
 And some other libraries as:
 * Retrofit
+* Glide
