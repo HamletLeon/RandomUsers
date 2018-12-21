@@ -5,6 +5,7 @@ import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.hamletleon.randomusers.dtos.LoadingProgress
 import com.hamletleon.randomusers.models.User
 import com.hamletleon.randomusers.repositories.UsersRepository
 import com.hamletleon.randomusers.ui.users.adapters.UsersAdapter
@@ -14,10 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
+import com.hamletleon.randomusers.R
 
 class MainViewModel(application: Application) : AndroidViewModel(application), CoroutineScope {
+    val loading = MutableLiveData<LoadingProgress>()
     private val repository: UsersRepository = UsersRepository(application)
     var twoPane: Boolean = false
+    var lastOrientation: Int = 0
 
     val notifyMainList = MutableLiveData<Boolean>()
     val notifyFavoriteList = MutableLiveData<Boolean>()
@@ -28,7 +32,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
     var favoritesAdapter: UsersAdapter? = null
 
     var lastUsers = listOf<User>()
-    var lastSuggestions = listOf<String>() // Simple lastSuggestions implementation
 
     var lastFavorites = listOf<User>()
 
@@ -44,11 +47,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
     }
 
     fun getUsers(page: Int = 1) {
+        if (usersAdapter == null) loading.value = LoadingProgress(R.string.loading_users)
         launch {
             repository.getUsers(page).await().let { it ->
                 lastUsers = it.toMutableList()
-                lastSuggestions = it.map { it.fullName }
                 notifyMainList.value = true
+                if (loading.value != null) loading.value = null
             }
         }
     }
