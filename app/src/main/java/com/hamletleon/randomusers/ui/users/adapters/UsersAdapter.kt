@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LifecycleOwner
+import androidx.fragment.app.Fragment
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.hamletleon.randomusers.R
 import com.hamletleon.randomusers.databinding.UserListItemBinding
 import com.hamletleon.randomusers.models.User
 
-class UsersAdapter<T>(private val owner: T, initialUsers: List<User>? = null) : RecyclerView.Adapter<UserViewHolder>(), Filterable where T : LifecycleOwner {
+class UsersAdapter(private val owner: Fragment, initialUsers: List<User>? = null, private val twoPane: Boolean = false) : RecyclerView.Adapter<UserViewHolder>(), Filterable {
 
     private lateinit var binding: UserListItemBinding
 
@@ -33,10 +33,15 @@ class UsersAdapter<T>(private val owner: T, initialUsers: List<User>? = null) : 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = filteredUsers[position]
         holder.bind(user).setOnClickListener {
-            val navController = Navigation.findNavController(it)
             val args = Bundle()
             args.putInt("userId", user.id)
-            navController.navigate(R.id.userDetailsFragment, args)
+            if (twoPane) {
+                val navController = Navigation.findNavController(owner.requireActivity(), R.id.two_pane_nav_fragment)
+                navController.navigate(R.id.userDetailsFragment2, args)
+            } else {
+                val navController = Navigation.findNavController(it)
+                navController.navigate(R.id.userDetailsFragment, args)
+            }
         }
     }
 
