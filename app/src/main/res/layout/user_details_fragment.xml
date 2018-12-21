@@ -47,7 +47,7 @@
                             android:layout_margin="5dp"
                             android:text="@string/add_to_favorites"
                             android:onClick="@{ () -> model.saveToFavorites() }"
-                            android:enabled="@{ !model.savingToFavorites }"/>
+                            android:enabled="@{ !safeUnbox(model.savingToFavorites) }"/>
 
                         <ProgressBar
                             android:layout_width="30dp"
@@ -55,7 +55,7 @@
                             android:translationY="1dp"
                             app:elevation="4dp"
                             android:layout_centerInParent="true"
-                            android:visibility="@{ model.savingToFavorites ? View.VISIBLE : View.GONE, default = gone }"/>
+                            android:visibility="@{ safeUnbox(model.savingToFavorites) ? View.VISIBLE : View.GONE, default = gone }"/>
 
                     </RelativeLayout>
 

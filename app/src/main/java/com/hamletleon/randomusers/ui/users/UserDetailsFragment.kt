@@ -57,7 +57,6 @@ class UserDetailsFragment: Fragment() {
         viewModel.contactSaved.observe(this, Observer {
             if (it == true) {
                 Toast.makeText(requireContext(), String.format(getString(R.string.contact_saved_successfully), viewModel.user.value?.getName()), Toast.LENGTH_LONG).show()
-                MainActivity.updateMainFragmentAdapters()
             }
         })
     }
