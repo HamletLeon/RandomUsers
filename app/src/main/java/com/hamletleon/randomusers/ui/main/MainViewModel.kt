@@ -17,16 +17,15 @@ import kotlin.coroutines.CoroutineContext
 
 class MainViewModel(application: Application) : AndroidViewModel(application), CoroutineScope {
     private val repository: UsersRepository = UsersRepository(application)
+    var twoPane: Boolean = false
 
     val notifyMainList = MutableLiveData<Boolean>()
     val notifyFavoriteList = MutableLiveData<Boolean>()
 
-    var usersAdapter: UsersAdapter<MainFragment>? = null
+    var usersAdapter: UsersAdapter? = null
     var usersSuggestionsAdapter: SimpleCursorAdapter? = null
 
-    var favoritesAdapter: UsersAdapter<MainFragment>? = null
-
-    val twoPane = MutableLiveData<Boolean>()
+    var favoritesAdapter: UsersAdapter? = null
 
     var lastUsers = listOf<User>()
     var lastSuggestions = listOf<String>() // Simple lastSuggestions implementation

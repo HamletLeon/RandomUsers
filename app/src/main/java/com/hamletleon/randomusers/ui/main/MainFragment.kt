@@ -33,6 +33,8 @@ class MainFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        if (user_detail_container != null) viewModel?.twoPane = true
+
         binding.model = viewModel
         binding.setLifecycleOwner(this)
 
@@ -70,7 +72,7 @@ class MainFragment : Fragment() {
 
     private fun setAdapter(recyclerView: RecyclerView, users: List<User>?, mainAdapter: Boolean = true) {
         val manager = initManager(recyclerView, mainAdapter)
-        val adapter = UsersAdapter(this, users)
+        val adapter = UsersAdapter(this, users, viewModel?.twoPane ?: false)
         if (mainAdapter) {
             viewModel?.usersAdapter = adapter
             viewModel?.scrollListener(manager)?.let {

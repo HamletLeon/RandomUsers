@@ -10,16 +10,87 @@
     </data>
 
     <LinearLayout
-        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MainFragment"/>
+        <LinearLayout
+                android:id="@+id/main"
+                android:layout_width="200dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
+
+            <LinearLayout
+                    android:id="@+id/favoritesLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:minHeight="100dp"
+                    android:layout_weight="0.3"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:paddingLeft="7dp"
+                    android:paddingRight="7dp"
+                    android:gravity="center_vertical">
+
+                <TextView
+                        android:id="@+id/favoritesTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:text="@string/favorites"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/favoritesList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:id="@+id/allLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingLeft="7dp"
+                    android:paddingRight="7dp"
+                    android:gravity="center_vertical">
+
+                <TextView
+                        android:id="@+id/allTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:text="@string/others"
+                        android:visibility="gone"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/allList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <FrameLayout
+                android:id="@+id/user_detail_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"/>
+
+        <fragment
+            android:id="@+id/two_pane_nav_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="false"
+            app:navGraph="@navigation/two_pane_nav_graph" />
 
     </LinearLayout>
 
