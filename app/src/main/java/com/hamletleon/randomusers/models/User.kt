@@ -31,8 +31,8 @@ class User {
     fun getTitledName() = "${title.capitalize()} ${firstName.capitalize()}"
     fun getFullTitledName() = "${title.capitalize()} ${fullName.capitalize()}"
     fun getPhoneNumber(): String =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) PhoneNumberUtils.formatNumber(phone, Locale.getDefault().country)
-        else PhoneNumberUtils.formatNumber(phone)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) PhoneNumberUtils.formatNumber(phone, Locale.getDefault().country) ?: "Not specified"
+        else PhoneNumberUtils.formatNumber(phone) ?: "Not specified"
 
     constructor()
     constructor(userDto: UserDto) {

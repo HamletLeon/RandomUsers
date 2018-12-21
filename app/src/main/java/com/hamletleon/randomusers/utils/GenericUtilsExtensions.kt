@@ -12,19 +12,23 @@ import kotlin.math.truncate
 
 data class ScreenSize(val height: Int, val width: Int)
 data class ItemsOnScreen(val itemsOnHeight: Int, val itemsOnWidth: Int, val totalItemsOnScreen: Int)
-fun Activity?.calculateScreenSizeAndItemsOnIt(itemSizeDpHeight: Int, itemSizeDpWidth: Int): Pair<ScreenSize, ItemsOnScreen> {
+data class Metrics(val heightDpSize: Int?, val widthDpSize: Int?)
+fun Activity?.calculateScreenSizeAndItemsOnIt(itemSizeDpHeight: Int, itemSizeDpWidth: Int, overrideMetrics: Metrics? = null): Pair<ScreenSize, ItemsOnScreen> {
     val metrics = DisplayMetrics()
     this?.windowManager?.defaultDisplay?.getMetrics(metrics)
     val itemSizePxHeight = truncate(itemSizeDpHeight * metrics.density)
     val itemSizePxWidth = truncate(itemSizeDpWidth * metrics.density)
 
+    val heightPixels: Int = if (overrideMetrics?.heightDpSize != null) truncate(overrideMetrics.heightDpSize * metrics.density).toInt() else metrics.heightPixels
+    val widthPixels = if (overrideMetrics?.widthDpSize != null) truncate(overrideMetrics.widthDpSize * metrics.density).toInt() else metrics.widthPixels
+
     val appBarHeight = this.getAppBarHeight()
     val statusBarHeight = this.getStatusBarHeight()
-    val height = truncate(((metrics.heightPixels - itemSizePxHeight - appBarHeight - statusBarHeight) / 2)).toInt()
-    val width = truncate(((metrics.widthPixels - itemSizePxWidth) / 2)).toInt()
+    val height = truncate(((heightPixels - itemSizePxHeight - appBarHeight - statusBarHeight) / 2)).toInt()
+    val width = truncate(((widthPixels - itemSizePxWidth) / 2)).toInt()
 
     val itemsH = truncate((metrics.heightPixels - appBarHeight - statusBarHeight) / itemSizePxHeight).toInt()
-    val itemsW = truncate(metrics.widthPixels / itemSizePxWidth).toInt()
+    val itemsW = truncate(widthPixels / itemSizePxWidth).toInt()
     val totalItems = (itemsH * itemsW)
 
     val screenSize = ScreenSize(height, width)

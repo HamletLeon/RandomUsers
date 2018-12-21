@@ -10,7 +10,7 @@ import com.hamletleon.randomusers.models.User
 import com.hamletleon.randomusers.repositories.local.services.FavoriteUsersLocalService
 import com.hamletleon.randomusers.repositories.local.services.RandomUsersLocalService
 
-@Database(entities = [ User::class, FavoriteUser::class ], version = 2)
+@Database(entities = [ User::class, FavoriteUser::class ], version = 3)
 abstract class DatabaseContext: RoomDatabase() {
     abstract fun getRandomUserLocalService() : RandomUsersLocalService
     abstract fun getFavoriteUsersLocalService(): FavoriteUsersLocalService

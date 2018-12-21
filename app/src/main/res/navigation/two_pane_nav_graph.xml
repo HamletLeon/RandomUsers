@@ -2,9 +2,21 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools" android:id="@+id/two_pane_nav_graph"
-            app:startDestination="@id/userDetailsFragment2">
+            app:startDestination="@id/emptyStateFragment">
 
-    <fragment android:id="@+id/userDetailsFragment2"
-              android:name="com.hamletleon.randomusers.ui.users.UserDetailsFragment"
-              android:label="user_details_fragment" tools:layout="@layout/user_details_fragment"/>
+    <fragment
+        android:id="@+id/emptyStateFragment"
+        android:name="com.hamletleon.randomusers.ui.EmptyStateFragment"
+        android:label="EmptyStateFragment"
+        tools:layout="@layout/empty_state_fragment">
+        <argument android:name="Image" app:argType="integer" android:defaultValue="0"/>
+        <argument android:name="Text" app:argType="integer" android:defaultValue="0"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/userDetailsFragment2"
+        android:name="com.hamletleon.randomusers.ui.users.UserDetailsFragment"
+        android:label="user_details_fragment"
+        tools:layout="@layout/user_details_fragment"/>
+
 </navigation>

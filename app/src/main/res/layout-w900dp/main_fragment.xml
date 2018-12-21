@@ -16,7 +16,7 @@
 
         <LinearLayout
                 android:id="@+id/main"
-                android:layout_width="200dp"
+                android:layout_width="300dp"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center">
@@ -52,8 +52,7 @@
             <LinearLayout
                     android:id="@+id/allLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:paddingLeft="7dp"
                     android:paddingRight="7dp"
@@ -80,17 +79,18 @@
 
         <FrameLayout
                 android:id="@+id/user_detail_container"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3"/>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <fragment
-            android:id="@+id/two_pane_nav_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:defaultNavHost="false"
-            app:navGraph="@navigation/two_pane_nav_graph" />
+            <fragment
+                android:id="@+id/two_pane_nav_fragment"
+                android:name="androidx.navigation.fragment.NavHostFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:defaultNavHost="false"
+                app:navGraph="@navigation/two_pane_nav_graph" />
+
+        </FrameLayout>
 
     </LinearLayout>
 

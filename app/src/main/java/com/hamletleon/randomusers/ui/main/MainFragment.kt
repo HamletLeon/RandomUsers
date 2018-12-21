@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuItemCompat
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.databinding.DataBindingUtil
@@ -15,6 +16,7 @@ import com.hamletleon.randomusers.R
 import com.hamletleon.randomusers.databinding.MainFragmentBinding
 import com.hamletleon.randomusers.models.User
 import com.hamletleon.randomusers.ui.users.adapters.UsersAdapter
+import com.hamletleon.randomusers.utils.Metrics
 import com.hamletleon.randomusers.utils.calculateScreenSizeAndItemsOnIt
 import kotlinx.android.synthetic.main.main_fragment.*
 
@@ -92,8 +94,9 @@ class MainFragment : Fragment() {
             recyclerView.adapter = viewModel?.favoritesAdapter
         }
     }
-    private fun initManager(recyclerView: RecyclerView, mainAdapter: Boolean = true, itemSizeDpHeight: Int = 80, itemSizeDpWidth: Int = 80): GridLayoutManager {
-        val (_, itemsOnScreen) = activity.calculateScreenSizeAndItemsOnIt(itemSizeDpHeight, itemSizeDpWidth)
+    private fun initManager(recyclerView: RecyclerView, mainAdapter: Boolean = true, itemSizeDpHeight: Int = 100, itemSizeDpWidth: Int = 100): GridLayoutManager {
+        val metrics = if (viewModel?.twoPane == true) Metrics(null, 300) else null
+        val (_, itemsOnScreen) = activity.calculateScreenSizeAndItemsOnIt(itemSizeDpHeight, itemSizeDpWidth, metrics)
         val manager = GridLayoutManager(context, if (mainAdapter) itemsOnScreen.itemsOnWidth else 1,
             if (mainAdapter) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL, false)
         recyclerView.layoutManager = manager
@@ -131,11 +134,11 @@ class MainFragment : Fragment() {
         viewModel?.favoritesAdapter = null
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel?.notifyMainList?.removeObservers(this)
-        viewModel?.notifyFavoriteList?.removeObservers(this)
-    }
+//    override fun onPause() {
+//        super.onPause()
+//        viewModel?.notifyMainList?.removeObservers(this)
+//        viewModel?.notifyFavoriteList?.removeObservers(this)
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -145,7 +148,8 @@ class MainFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
-        searchView = menu.findItem(R.id.search).actionView as SearchView
+        val menuItem = menu.findItem(R.id.search)
+        searchView = menuItem.actionView as SearchView
         searchView?.queryHint = getString(R.string.search_users_title)
         searchView?.isQueryRefinementEnabled = true
         searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
@@ -159,6 +163,16 @@ class MainFragment : Fragment() {
                 searchView?.suggestionsAdapter?.filter?.filter(newText)
                 viewModel?.usersAdapter?.filter?.filter(newText)
                 viewModel?.favoritesAdapter?.filter?.filter(newText)
+                return true
+            }
+        })
+        menuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                viewModel?.usersAdapter?.filtered = false
                 return true
             }
         })
