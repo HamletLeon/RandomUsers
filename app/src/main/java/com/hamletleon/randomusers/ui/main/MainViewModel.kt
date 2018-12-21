@@ -1,7 +1,7 @@
 package com.hamletleon.randomusers.ui.main
 
 import android.app.Application
-import android.widget.SimpleCursorAdapter
+import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,7 +40,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
     fun scrollListener(manager: GridLayoutManager) = object: EndlessRecyclerViewScrollListener(manager) {
         override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView) {
             this@MainViewModel.page = page
-            getUsers(page)
+            if (usersAdapter?.filtered == false) getUsers(page)
         }
     }
 
