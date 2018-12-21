@@ -15,6 +15,7 @@ import com.hamletleon.randomusers.R
 import com.hamletleon.randomusers.databinding.MainFragmentBinding
 import com.hamletleon.randomusers.models.User
 import com.hamletleon.randomusers.ui.users.adapters.UsersAdapter
+import com.hamletleon.randomusers.utils.Metrics
 import com.hamletleon.randomusers.utils.calculateScreenSizeAndItemsOnIt
 import kotlinx.android.synthetic.main.main_fragment.*
 
@@ -92,8 +93,9 @@ class MainFragment : Fragment() {
             recyclerView.adapter = viewModel?.favoritesAdapter
         }
     }
-    private fun initManager(recyclerView: RecyclerView, mainAdapter: Boolean = true, itemSizeDpHeight: Int = 80, itemSizeDpWidth: Int = 80): GridLayoutManager {
-        val (_, itemsOnScreen) = activity.calculateScreenSizeAndItemsOnIt(itemSizeDpHeight, itemSizeDpWidth)
+    private fun initManager(recyclerView: RecyclerView, mainAdapter: Boolean = true, itemSizeDpHeight: Int = 100, itemSizeDpWidth: Int = 100): GridLayoutManager {
+        val metrics = if (viewModel?.twoPane == true) Metrics(null, 300) else null
+        val (_, itemsOnScreen) = activity.calculateScreenSizeAndItemsOnIt(itemSizeDpHeight, itemSizeDpWidth, metrics)
         val manager = GridLayoutManager(context, if (mainAdapter) itemsOnScreen.itemsOnWidth else 1,
             if (mainAdapter) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL, false)
         recyclerView.layoutManager = manager
@@ -131,11 +133,11 @@ class MainFragment : Fragment() {
         viewModel?.favoritesAdapter = null
     }
 
-    override fun onPause() {
-        super.onPause()
-        viewModel?.notifyMainList?.removeObservers(this)
-        viewModel?.notifyFavoriteList?.removeObservers(this)
-    }
+//    override fun onPause() {
+//        super.onPause()
+//        viewModel?.notifyMainList?.removeObservers(this)
+//        viewModel?.notifyFavoriteList?.removeObservers(this)
+//    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
