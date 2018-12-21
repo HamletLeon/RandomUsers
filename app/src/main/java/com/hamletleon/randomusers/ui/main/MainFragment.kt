@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuItemCompat
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.databinding.DataBindingUtil
@@ -147,7 +148,8 @@ class MainFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
 
-        searchView = menu.findItem(R.id.search).actionView as SearchView
+        val menuItem = menu.findItem(R.id.search)
+        searchView = menuItem.actionView as SearchView
         searchView?.queryHint = getString(R.string.search_users_title)
         searchView?.isQueryRefinementEnabled = true
         searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
@@ -161,6 +163,16 @@ class MainFragment : Fragment() {
                 searchView?.suggestionsAdapter?.filter?.filter(newText)
                 viewModel?.usersAdapter?.filter?.filter(newText)
                 viewModel?.favoritesAdapter?.filter?.filter(newText)
+                return true
+            }
+        })
+        menuItem.setOnActionExpandListener(object: MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                viewModel?.usersAdapter?.filtered = false
                 return true
             }
         })
