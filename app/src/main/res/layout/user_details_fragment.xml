@@ -4,51 +4,79 @@
         tools:context=".ui.users.UserDetailsFragment">
 
     <data>
+        <import type="android.view.View"/>
         <variable name="model" type="com.hamletleon.randomusers.ui.users.UserDetailsViewModel"/>
     </data>
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/dataLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <include
-                layout="@layout/brief_user_details"
-                app:model="@{ model.user }"/>
-
-            <include
-                layout="@layout/timezone_details"
-                app:model="@{ model.user.timeZone }"/>
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_margin="16dp"
-                android:gravity="center">
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="@string/add_to_favorites"
-                    android:onClick="@{ () -> model.saveToFavorites() }"/>
+                <include
+                    layout="@layout/brief_user_details"
+                    app:model="@{ model.user }"/>
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:layout_width="wrap_content"
+                <include
+                    layout="@layout/timezone_details"
+                    app:model="@{ model.user.timeZone }"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="@string/add_to_contacts"
-                    android:onClick="@{ () -> model.addToContacts() }"/>
+                    android:orientation="horizontal"
+                    android:layout_margin="16dp"
+                    android:gravity="center">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <androidx.appcompat.widget.AppCompatButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:text="@string/add_to_favorites"
+                            android:onClick="@{ () -> model.saveToFavorites() }"
+                            android:enabled="@{ !safeUnbox(model.savingToFavorites) }"/>
+
+                        <ProgressBar
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:translationY="1dp"
+                            app:elevation="4dp"
+                            android:layout_centerInParent="true"
+                            android:visibility="@{ safeUnbox(model.savingToFavorites) ? View.VISIBLE : View.GONE, default = gone }"/>
+
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="@string/add_to_contacts"
+                        android:onClick="@{ () -> model.addToContacts() }"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-        </LinearLayout>
+        </ScrollView>
 
-    </ScrollView>
+        <include
+            android:id="@+id/progressLayout"
+            layout="@layout/progress"
+            app:model="@{ model.loading }"/>
+
+    </RelativeLayout>
 
 </layout>

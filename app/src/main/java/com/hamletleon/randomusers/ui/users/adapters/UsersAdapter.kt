@@ -1,5 +1,6 @@
 package com.hamletleon.randomusers.ui.users.adapters
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -33,9 +34,10 @@ class UsersAdapter(private val owner: Fragment, initialUsers: List<User>? = null
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
         val user = filteredUsers[position]
         holder.bind(user).setOnClickListener {
+            val orientation = it.resources.configuration.orientation
             val args = Bundle()
             args.putInt("userId", user.id)
-            if (twoPane) {
+            if (twoPane && orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 val navController = Navigation.findNavController(owner.requireActivity(), R.id.two_pane_nav_fragment)
                 navController.navigate(R.id.userDetailsFragment2, args)
             } else {

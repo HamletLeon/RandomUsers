@@ -1,10 +1,10 @@
 package com.hamletleon.randomusers.ui.main
 
+import android.content.res.Configuration
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuItemCompat
 import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.databinding.DataBindingUtil
@@ -36,16 +36,18 @@ class MainFragment : Fragment() {
         setHasOptionsMenu(true)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         if (user_detail_container != null) viewModel?.twoPane = true
+        val orientation = resources.configuration.orientation
 
         binding.model = viewModel
         binding.setLifecycleOwner(this)
 
+        if (viewModel?.usersAdapter != null || orientation != viewModel?.lastOrientation) resetMainList()
+        if (viewModel?.favoritesAdapter != null || orientation != viewModel?.lastOrientation) resetFavoriteList()
+        viewModel?.lastOrientation = orientation
+
         setListeners()
 
-        if (viewModel?.usersAdapter != null) resetMainList()
         viewModel?.getUsers()
-
-        if (viewModel?.favoritesAdapter != null) resetFavoriteList()
         viewModel?.getFavorites()
     }
 
@@ -69,6 +71,11 @@ class MainFragment : Fragment() {
                 )
                 else if (users != null && users.isNotEmpty()) viewModel?.favoritesAdapter?.addUsers(users)
             }
+        })
+
+        viewModel?.loading?.observe(this, Observer {
+            progressLayout.visibility = if (it == null) View.GONE else View.VISIBLE
+            dataLayout.visibility = if (it == null) View.VISIBLE else View.GONE
         })
     }
 
@@ -95,7 +102,7 @@ class MainFragment : Fragment() {
         }
     }
     private fun initManager(recyclerView: RecyclerView, mainAdapter: Boolean = true, itemSizeDpHeight: Int = 100, itemSizeDpWidth: Int = 100): GridLayoutManager {
-        val metrics = if (viewModel?.twoPane == true) Metrics(null, 300) else null
+        val metrics = if (viewModel?.twoPane == true && viewModel?.lastOrientation == Configuration.ORIENTATION_LANDSCAPE) Metrics(null, 300) else null
         val (_, itemsOnScreen) = activity.calculateScreenSizeAndItemsOnIt(itemSizeDpHeight, itemSizeDpWidth, metrics)
         val manager = GridLayoutManager(context, if (mainAdapter) itemsOnScreen.itemsOnWidth else 1,
             if (mainAdapter) RecyclerView.VERTICAL else RecyclerView.HORIZONTAL, false)
@@ -133,12 +140,6 @@ class MainFragment : Fragment() {
         viewModel?.lastFavorites = listOf()
         viewModel?.favoritesAdapter = null
     }
-
-//    override fun onPause() {
-//        super.onPause()
-//        viewModel?.notifyMainList?.removeObservers(this)
-//        viewModel?.notifyFavoriteList?.removeObservers(this)
-//    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
@@ -183,5 +184,13 @@ class MainFragment : Fragment() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (viewModel?.lastOrientation == resources.configuration.orientation) {
+            viewModel?.notifyMainList?.removeObservers(this)
+            viewModel?.notifyFavoriteList?.removeObservers(this)
+        }
     }
 }

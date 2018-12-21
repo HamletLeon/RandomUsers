@@ -9,19 +9,22 @@
         <variable name="model" type="com.hamletleon.randomusers.ui.main.MainViewModel"/>
     </data>
 
-    <LinearLayout
-        android:id="@+id/main"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/dataLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center">
 
         <LinearLayout
             android:id="@+id/favoritesLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:minHeight="100dp"
-            android:layout_weight="0.3"
             android:orientation="vertical"
             android:visibility="gone"
             android:paddingLeft="7dp"
@@ -72,5 +75,12 @@
         </LinearLayout>
 
     </LinearLayout>
+
+        <include
+            android:id="@+id/progressLayout"
+            layout="@layout/progress"
+            app:model="@{ model.loading }"/>
+
+    </RelativeLayout>
 
 </layout>

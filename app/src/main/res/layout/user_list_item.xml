@@ -9,8 +9,8 @@
 
     <androidx.cardview.widget.CardView
             android:id="@+id/userCard"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="85dp"
+            android:layout_height="85dp"
             android:layout_margin="5dp"
             app:cardCornerRadius="2dp">
 
@@ -28,12 +28,15 @@
                 android:layout_height="48dp"
                 android:layout_margin="2dp"/>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
                 android:gravity="center"
                 android:text="@{ model.getName() }"
+                android:ellipsize="end"
+                app:autoSizeTextType="uniform"
                 android:textColor="@android:color/black"
                 android:textSize="12sp"/>
 
