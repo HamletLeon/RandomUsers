@@ -1,7 +1,10 @@
 package com.hamletleon.randomusers.utils
 
 import android.app.Activity
+import android.app.Application
+import android.content.Intent
 import android.graphics.Rect
+import android.provider.ContactsContract
 import android.util.DisplayMetrics
 import android.view.View
 import android.view.Window
@@ -46,4 +49,16 @@ fun Activity?.getStatusBarHeight(): Int {
     val contentViewTop = window?.findViewById<View>(Window.ID_ANDROID_CONTENT)?.top ?: 0
     val height = contentViewTop - statusBarHeight
     return if (height < 0) 0 else height
+}
+
+fun Application?.addContact(fullName: String, phone: String, email: String? = null) {
+    if (this == null) return
+    val intent = Intent(ContactsContract.Intents.Insert.ACTION)
+    intent.type = ContactsContract.RawContacts.CONTENT_TYPE
+    // required
+    intent.putExtra(ContactsContract.Intents.Insert.NAME, fullName)
+    intent.putExtra(ContactsContract.Intents.Insert.PHONE, phone)
+    // optionals
+    if (email != null) intent.putExtra(ContactsContract.Intents.Insert.EMAIL, email)
+    this.startActivity(intent)
 }

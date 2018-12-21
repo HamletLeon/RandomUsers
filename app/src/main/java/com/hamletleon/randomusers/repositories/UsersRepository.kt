@@ -1,22 +1,22 @@
 package com.hamletleon.randomusers.repositories
 
 import android.content.Context
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import com.hamletleon.randomusers.dtos.RandomUserDto
+import com.hamletleon.randomusers.models.FavoriteUser
 import com.hamletleon.randomusers.models.User
 import com.hamletleon.randomusers.repositories.local.LocalServiceFactory
+import com.hamletleon.randomusers.repositories.local.services.FavoriteUsersLocalService
 import com.hamletleon.randomusers.repositories.local.services.RandomUsersLocalService
 import com.hamletleon.randomusers.repositories.remote.RemoteServiceFactory
 import com.hamletleon.randomusers.repositories.remote.services.RandomUsersRemoteService
+import com.hamletleon.randomusers.utils.fromDate
 import kotlinx.coroutines.*
 import retrofit2.HttpException
 import java.lang.Exception
+import java.util.*
 
 class UsersRepository(ctx: Context) {
     private val localService: RandomUsersLocalService = LocalServiceFactory.getRandomUsersService(ctx)
+    private val favoriteLocalService: FavoriteUsersLocalService = LocalServiceFactory.getFavoriteUsersService(ctx)
     private val remoteService: RandomUsersRemoteService? = RemoteServiceFactory.getRandomUsersService()
     private val sharedPreferences = ctx.getSharedPreferences(ctx.packageName, Context.MODE_PRIVATE)
 
@@ -28,7 +28,20 @@ class UsersRepository(ctx: Context) {
     suspend fun getUserById(id: Int): User {
         return withContext(Dispatchers.IO) {
             async { localService.getUserById(id) }
-        } .await()
+        }.await()
+    }
+
+    suspend fun getFavoriteUsers(): Deferred<List<User>> {
+        return withContext(Dispatchers.IO) {
+            async { favoriteLocalService.getAllFavoriteUsers() }
+        }
+    }
+
+    suspend fun saveFavoriteUser(userId: Int): Boolean {
+        val favoriteUser = FavoriteUser()
+        favoriteUser.userId = userId
+        favoriteUser.registeredAt = Calendar.getInstance().time.fromDate() ?: ""
+        return withContext(Dispatchers.Default) { favoriteLocalService.upsert(favoriteUser) }
     }
 
     private suspend fun getUsers(limit: Int, offset: Int, page: Int, onError: (String) -> Unit = {}): Deferred<List<User>> {

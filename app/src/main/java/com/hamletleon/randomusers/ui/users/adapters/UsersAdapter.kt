@@ -39,4 +39,8 @@ class UsersAdapter<T>(private val owner: T, initialUsers: List<User>? = null) : 
         users.addAll(moreUsers)
         notifyDataSetChanged()
     }
+
+    fun clear() {
+        users.clear()
+    }
 }

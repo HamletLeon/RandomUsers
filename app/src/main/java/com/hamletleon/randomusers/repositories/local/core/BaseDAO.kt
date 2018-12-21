@@ -21,17 +21,18 @@ abstract class BaseDAO<T> {
     abstract fun delete(obj: T)
 
     @Transaction
-    open fun upsert(obj: T?){
-        if (obj == null) return
+    open fun upsert(obj: T?): Boolean {
+        if (obj == null) return false
         val id = insert(obj)
         if (id <= -1){
             update(obj)
         }
+        return true
     }
 
     @Transaction
-    open fun upsert(list: List<T>?){
-        if(list == null) return
+    open fun upsert(list: List<T>?): Boolean {
+        if(list == null) return false
         val insertedResults: List<Long> = insert(list)
         val updateList: MutableList<T> = mutableListOf()
 
@@ -43,5 +44,6 @@ abstract class BaseDAO<T> {
         if (updateList.any()){
             update(updateList)
         }
+        return true
     }
 }

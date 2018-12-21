@@ -7,11 +7,13 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.hamletleon.randomusers.models.FavoriteUser
 import com.hamletleon.randomusers.models.User
+import com.hamletleon.randomusers.repositories.local.services.FavoriteUsersLocalService
 import com.hamletleon.randomusers.repositories.local.services.RandomUsersLocalService
 
-@Database(entities = [ User::class, FavoriteUser::class ], version = 1)
+@Database(entities = [ User::class, FavoriteUser::class ], version = 2)
 abstract class DatabaseContext: RoomDatabase() {
     abstract fun getRandomUserLocalService() : RandomUsersLocalService
+    abstract fun getFavoriteUsersLocalService(): FavoriteUsersLocalService
 
     companion object {
         private var INSTANCE: DatabaseContext? = null

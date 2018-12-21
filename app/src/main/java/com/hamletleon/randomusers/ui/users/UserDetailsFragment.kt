@@ -34,11 +34,4 @@ class UserDetailsFragment: Fragment() {
             // What to do if arguments error...
         }
     }
-
-    private fun setListeners() {
-        viewModel.user.observe(this, Observer {
-            if (it != null) {
-            }
-        })
-    }
 }

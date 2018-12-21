@@ -13,7 +13,8 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
 
         <LinearLayout
             android:id="@+id/favoritesLayout"
@@ -22,13 +23,15 @@
             android:minHeight="100dp"
             android:layout_weight="0.3"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/favoritesTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -37,10 +40,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/favoritesList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="7dp"
-                android:paddingRight="7dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
 
@@ -49,13 +49,15 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingLeft="7dp"
+            android:paddingRight="7dp"
+            android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/allTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -65,10 +67,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/allList"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="7dp"
-                android:paddingRight="7dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
+                android:layout_height="match_parent"/>
 
         </LinearLayout>
 

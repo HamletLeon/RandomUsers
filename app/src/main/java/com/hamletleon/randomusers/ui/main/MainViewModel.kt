@@ -18,6 +18,9 @@ import kotlin.coroutines.CoroutineContext
 class MainViewModel(application: Application) : AndroidViewModel(application), CoroutineScope {
     private val repository: UsersRepository = UsersRepository(application)
 
+    val notifyMainList = MutableLiveData<Boolean>()
+    val notifyFavoriteList = MutableLiveData<Boolean>()
+
     var usersAdapter: UsersAdapter<MainFragment>? = null
     var usersSuggestionsAdapter: SimpleCursorAdapter? = null
 
@@ -25,10 +28,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
 
     val twoPane = MutableLiveData<Boolean>()
 
-    val users = MutableLiveData<List<User>>()
-    val suggestions = MutableLiveData<List<String>>() // Simple suggestions implementation
+    var lastUsers = listOf<User>()
+    var lastSuggestions = listOf<String>() // Simple lastSuggestions implementation
 
-    val favorites = mutableListOf<User>()
+    var lastFavorites = listOf<User>()
 
     private val job = Job()
     override val coroutineContext: CoroutineContext = job + Dispatchers.Main
@@ -43,9 +46,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
 
     fun getUsers(page: Int = 1) {
         launch {
-            val response = repository.getUsers(page).await()
-            users.value = response.toMutableList()
-            suggestions.value = response.map { it.fullName }
+            repository.getUsers(page).await().let { it ->
+                lastUsers = it.toMutableList()
+                lastSuggestions = it.map { it.fullName }
+                notifyMainList.value = true
+            }
+        }
+    }
+
+    fun getFavorites() {
+        launch {
+            repository.getFavoriteUsers().await().let {
+                lastFavorites = it
+                notifyFavoriteList.value = true
+            }
         }
     }
 }
