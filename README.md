@@ -6,11 +6,11 @@ Implementing the follow libraries from the Android Architecture Component:
 * Navigation
 * Room
 * LiveData
+* DataBinding
 
 And some other libraries as:
 * Retrofit
 * Glide
 * Kotlin Coroutines
-* DataBinding (core)
 * retrofit2-kotlin-coroutines-adapter
 * Gson
