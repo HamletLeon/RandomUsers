@@ -2,11 +2,10 @@ package com.hamletleon.randomusers.ui.main
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.SimpleCursorAdapter
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.cursoradapter.widget.CursorAdapter
+import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -22,6 +21,7 @@ import kotlinx.android.synthetic.main.main_fragment.*
 class MainFragment : Fragment() {
     private var viewModel: MainViewModel? = null
     private lateinit var binding: MainFragmentBinding
+    private var searchView: SearchView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -31,6 +31,7 @@ class MainFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        setHasOptionsMenu(true)
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         binding.model = viewModel
         binding.setLifecycleOwner(this)
@@ -50,51 +51,22 @@ class MainFragment : Fragment() {
                 val users = viewModel?.lastUsers
                 if (allList.adapter == null && users != null && users.isNotEmpty()) setAdapter(allList, users)
                 else if (users != null && users.isNotEmpty()) viewModel?.usersAdapter?.addUsers(users)
+                setSuggestionsAdapter()
             }
         })
 
         viewModel?.notifyFavoriteList?.observe(this, Observer {
             if (it == true) {
                 val users = viewModel?.lastFavorites
-                if (favoritesList.adapter == null && users != null && users.isNotEmpty()) setAdapter(favoritesList, users, false)
+                if (favoritesList.adapter == null && users != null && users.isNotEmpty()) setAdapter(
+                    favoritesList,
+                    users,
+                    false
+                )
                 else if (users != null && users.isNotEmpty()) viewModel?.favoritesAdapter?.addUsers(users)
             }
         })
-
-//        viewModel.lastUsers.observe(this, Observer {
-//            if (it != null && it.isNotEmpty() && binding.allList?.adapter == null) setAdapter(it, viewModel.usersAdapter.value)
-//            else if (it != null && it.isNotEmpty()) viewModel.usersAdapter.value?.addUsers(it)
-//        })
-//
-//        viewModel.lastSuggestions.observe(this, Observer {
-//            if (viewModel.usersSuggestionsAdapter == null) setSuggestionsAdapter(it)
-//            else {
-////                viewModel.usersSuggestionsAdapter
-//            }
-//        })
-//
-//        viewModel.lastFavorites.observe(this, Observer {
-//            if (binding.favoritesList?.adapter == null && it != null && it.isNotEmpty()) setAdapter(it, viewModel.favoritesAdapter.value, false)
-//            else if (it != null && it.isNotEmpty()) viewModel.favoritesAdapter.value?.addUsers(it)
-//        })
     }
-
-//    private fun setAdapter(lastUsers: List<User>? = null, createdAdapter: UsersAdapter<MainFragment>? = null, mainAdapter: Boolean = true) {
-//        if (mainAdapter)
-//        {
-//            val (manager, adapter) = setAdapter(binding.allList, lastUsers, createdAdapter, mainAdapter)
-//            binding.allList?.layoutManager = manager
-//            val scrollListener = viewModel.scrollListener(manager)
-//            binding.allList?.addOnScrollListener(scrollListener)
-//            viewModel.usersAdapter.value = adapter
-//        } else {
-//            val (manager, adapter) = setAdapter(binding.favoritesList, lastUsers, createdAdapter, mainAdapter)
-//            binding.favoritesList?.layoutManager = manager
-//            viewModel.favoritesAdapter.value = adapter
-//            binding.favoritesLayout?.visibility = View.VISIBLE
-//            binding.allTitle?.visibility = View.VISIBLE
-//        }
-//    }
 
     private fun setAdapter(recyclerView: RecyclerView, users: List<User>?, mainAdapter: Boolean = true) {
         val manager = initManager(recyclerView, mainAdapter)
@@ -126,11 +98,25 @@ class MainFragment : Fragment() {
         return manager
     }
 
-    private fun setSuggestionsAdapter(suggestions: List<String>)
+    // Not Working
+    private fun setSuggestionsAdapter()
     {
-        val suggestionsAdapter = SimpleCursorAdapter(activity, android.R.layout.simple_list_item_1, null, suggestions.toTypedArray(),
-            intArrayOf(android.R.id.text1), CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
+        val lastSuggestions = viewModel?.usersAdapter?.users?.map { it.firstName }?.toTypedArray()
+        val suggestionsAdapter = SimpleCursorAdapter(activity, android.R.layout.simple_list_item_1, null, lastSuggestions,
+        intArrayOf(android.R.id.text1), CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER)
         viewModel?.usersSuggestionsAdapter = suggestionsAdapter
+
+        searchView?.suggestionsAdapter = viewModel?.usersSuggestionsAdapter
+        searchView?.setOnSuggestionListener(object: SearchView.OnSuggestionListener {
+            override fun onSuggestionSelect(position: Int): Boolean {
+                return false
+            }
+
+            override fun onSuggestionClick(position: Int): Boolean {
+                return false
+            }
+
+        })
     }
 
     private fun resetMainList() {
@@ -147,5 +133,39 @@ class MainFragment : Fragment() {
         super.onPause()
         viewModel?.notifyMainList?.removeObservers(this)
         viewModel?.notifyFavoriteList?.removeObservers(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu, menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+
+        searchView = menu.findItem(R.id.search).actionView as SearchView
+        searchView?.queryHint = getString(R.string.search_users_title)
+        searchView?.isQueryRefinementEnabled = true
+        searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                viewModel?.usersAdapter?.filter?.filter(query)
+                viewModel?.favoritesAdapter?.filter?.filter(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                searchView?.suggestionsAdapter?.filter?.filter(newText)
+                viewModel?.usersAdapter?.filter?.filter(newText)
+                viewModel?.favoritesAdapter?.filter?.filter(newText)
+                return true
+            }
+        })
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.search){
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
